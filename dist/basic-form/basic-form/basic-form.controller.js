@@ -16,68 +16,98 @@ exports.BasicFormController = void 0;
 const common_1 = require("@nestjs/common");
 const basic_form_service_1 = require("./basic-form/basic-form.service");
 const userbasic_dto_1 = require("./userbasic.dto");
+const error_response_1 = require("../../common/constant/error-response");
 let BasicFormController = class BasicFormController {
     constructor(basicFormService) {
         this.basicFormService = basicFormService;
+    }
+    async sendResponse(type, res) {
+        if (type === 'success') {
+            return {
+                status: 200,
+                data: res
+            };
+        }
+        else {
+            return {
+                status: 404,
+                msg: res
+            };
+        }
     }
     async findAll(res) {
         try {
             const response = await this.basicFormService.findAll();
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ playload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('data not fetch from userbasic-form');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async findOne(id, res) {
         try {
             const response = await this.basicFormService.findOne(id);
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ playload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('data not fetch from userbasic-form');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async create(createFormDto, res) {
         try {
             const response = await this.basicFormService.create(createFormDto);
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ playload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('can nott created data from userbasic-form');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async update(id, createFormDto, res) {
         try {
-            const response = await this.basicFormService.update(id, createFormDto);
-            return res.status(common_1.HttpStatus.OK).json({ payload: response });
+            const response = this.basicFormService.update(id, createFormDto);
+            if (response) {
+                return await this.sendResponse('success', res.send(response));
+            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async delete(id, res) {
         try {
-            const response = await this.basicFormService.delete(id);
-            return res.status(common_1.HttpStatus.OK).json({ payload: response });
+            const response = this.basicFormService.delete(id);
+            if (response) {
+                return await this.sendResponse('success', res.send(response));
+            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
 };
@@ -98,6 +128,7 @@ __decorate([
 ], BasicFormController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),

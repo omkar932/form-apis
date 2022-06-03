@@ -16,68 +16,98 @@ exports.TechdetailsFormController = void 0;
 const common_1 = require("@nestjs/common");
 const techdetail_form_service_1 = require("./techdetail-form/techdetail-form.service");
 const techdetail_entity_1 = require("./techdetail.entity");
+const error_response_1 = require("../../common/constant/error-response");
 let TechdetailsFormController = class TechdetailsFormController {
     constructor(techFormService) {
         this.techFormService = techFormService;
+    }
+    async sendResponse(type, res) {
+        if (type === 'success') {
+            return {
+                status: 200,
+                data: res
+            };
+        }
+        else {
+            return {
+                status: 404,
+                msg: res
+            };
+        }
     }
     async findAll(res) {
         try {
             const response = await this.techFormService.findAll();
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ playload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('cannot fetch technical form data');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async findOne(id, res) {
         try {
             const response = await this.techFormService.findOne(id);
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ payload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('cannot fetch technical form data');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async create(createFormDto, res) {
         try {
             const response = await this.techFormService.create(createFormDto);
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ payload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('cannot create technical form data');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async update(id, createFormDto, res) {
         try {
-            const response = await this.techFormService.update(id, createFormDto);
-            return res.status(common_1.HttpStatus.OK).json({ payload: response });
+            const response = this.techFormService.update(id, createFormDto);
+            if (response) {
+                return await this.sendResponse('success', res.send(response));
+            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async delete(id, res) {
         try {
-            const response = await this.techFormService.delete(id);
-            return res.status(common_1.HttpStatus.OK).json({ payload: response });
+            const response = this.techFormService.delete(id);
+            if (response) {
+                return await this.sendResponse('success', res.send(response));
+            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
 };
@@ -98,6 +128,7 @@ __decorate([
 ], TechdetailsFormController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),

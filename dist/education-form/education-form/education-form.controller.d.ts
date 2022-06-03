@@ -4,9 +4,58 @@ import { EducationFormDto } from './education-form.dto';
 export declare class EducationFormController {
     private eduFormService;
     constructor(eduFormService: EducationFormService);
-    findAll(res: Response): Promise<string | Response<any, Record<string, any>>>;
-    findOne(id: number, res: Response): Promise<string | Response<any, Record<string, any>>>;
-    create(createFormDto: EducationFormDto, res: Response): Promise<string | Response<any, Record<string, any>>>;
-    update(id: number, createFormDto: EducationFormDto, res: Response): Promise<string | Response<any, Record<string, any>>>;
-    delete(id: number, res: Response): Promise<string | Response<any, Record<string, any>>>;
+    sendResponse(type: string, res: any): Promise<{
+        status: number;
+        data: any;
+        msg?: undefined;
+    } | {
+        status: number;
+        msg: any;
+        data?: undefined;
+    }>;
+    findAll(res: Response): Promise<{
+        status: number;
+        data: any;
+        msg?: undefined;
+    } | {
+        status: number;
+        msg: any;
+        data?: undefined;
+    }>;
+    findOne(id: number, res: Response): Promise<{
+        status: number;
+        data: any;
+        msg?: undefined;
+    } | {
+        status: number;
+        msg: any;
+        data?: undefined;
+    }>;
+    create(createFormDto: EducationFormDto, res: Response): Promise<{
+        status: number;
+        data: any;
+        msg?: undefined;
+    } | {
+        status: number;
+        msg: any;
+        data?: undefined;
+    }>;
+    update(id: number, createFormDto: EducationFormDto, res: Response): Promise<{
+        status: number;
+        data: any;
+        msg?: undefined;
+    } | {
+        status: number;
+        msg: any;
+        data?: undefined;
+    }>;
+    delete(id: number, res: Response): Promise<{
+        status: number;
+        data: any;
+        msg?: undefined;
+    } | {
+        status: number;
+        msg: any;
+        data?: undefined;
+    }>;
 }

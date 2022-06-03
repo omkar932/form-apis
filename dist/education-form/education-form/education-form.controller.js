@@ -16,68 +16,98 @@ exports.EducationFormController = void 0;
 const common_1 = require("@nestjs/common");
 const education_form_service_1 = require("./education-form/education-form.service");
 const education_form_dto_1 = require("./education-form.dto");
+const error_response_1 = require("../../common/constant/error-response");
 let EducationFormController = class EducationFormController {
     constructor(eduFormService) {
         this.eduFormService = eduFormService;
+    }
+    async sendResponse(type, res) {
+        if (type === 'success') {
+            return {
+                status: 200,
+                data: res
+            };
+        }
+        else {
+            return {
+                status: 404,
+                msg: res
+            };
+        }
     }
     async findAll(res) {
         try {
             const response = await this.eduFormService.findAll();
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ playload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('data not fetch from education-form');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async findOne(id, res) {
         try {
             const response = await this.eduFormService.findOne(id);
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ playload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('data not fetch from education-form');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async create(createFormDto, res) {
         try {
             const response = await this.eduFormService.create(createFormDto);
             if (response) {
-                return res.status(common_1.HttpStatus.OK).json({ playload: response });
+                return await this.sendResponse('success', res.send(response));
             }
-            else {
-                throw Error('data not created from education-form');
-            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async update(id, createFormDto, res) {
         try {
-            const response = await this.eduFormService.update(id, createFormDto);
-            return res.status(common_1.HttpStatus.OK).json({ payload: response });
+            const response = this.eduFormService.update(id, createFormDto);
+            if (response) {
+                return await this.sendResponse('success', res.send(response));
+            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
     async delete(id, res) {
         try {
-            const response = await this.eduFormService.delete(id);
-            return res.status(common_1.HttpStatus.OK).json({ payload: response });
+            const response = this.eduFormService.delete(id);
+            if (response) {
+                return await this.sendResponse('success', res.send(response));
+            }
+            return this.sendResponse('error', res.send(response));
         }
         catch (error) {
-            return `${error} there is some network error`;
+            throw new common_1.BadRequestException({
+                msg: error_response_1.networkError,
+                error
+            });
         }
     }
 };
@@ -98,6 +128,7 @@ __decorate([
 ], EducationFormController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
