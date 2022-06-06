@@ -15,14 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentUploadService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const nestjs_paginate_1 = require("nestjs-paginate");
 const typeorm_2 = require("typeorm");
 const document_upload_entity_1 = require("../document-upload.entity");
 let DocumentUploadService = class DocumentUploadService {
     constructor(formRepository) {
         this.formRepository = formRepository;
     }
-    findAll() {
-        return this.formRepository.find({});
+    findAll(query) {
+        return (0, nestjs_paginate_1.paginate)(query, this.formRepository, {
+            sortableColumns: ['id', 'name', 'file', 'number'],
+            searchableColumns: ['name', 'file', 'number'],
+            defaultSortBy: [['id', 'DESC']],
+            filterableColumns: {
+                number: [nestjs_paginate_1.FilterOperator.GTE, nestjs_paginate_1.FilterOperator.LTE],
+            },
+            maxLimit: 20,
+        });
     }
     findOne(id) {
         return this.formRepository.findOne(id);

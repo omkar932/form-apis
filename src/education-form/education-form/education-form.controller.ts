@@ -53,7 +53,6 @@ export class EducationFormController {
         }
     }
     @Post()
-    @UsePipes(new ValidationPipe())
     async create(@Body() createFormDto: EducationFormDto, @Res() res: Response) {
         try {
             const response = await this.eduFormService.create(createFormDto)

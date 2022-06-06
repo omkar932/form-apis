@@ -4,6 +4,7 @@ import { Response } from 'express';
 import { DocumentUploadEntity } from './document-upload.entity';
 import { DocumentUploadDto } from './document-upload.dto';
 import { networkError } from 'src/common/constant/error-response';
+import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 @Controller('document-upload')
 export class DocumentUploadController {
 
@@ -21,22 +22,22 @@ export class DocumentUploadController {
             }
         }
     }
-    @Get()
-    async findAll(@Res() res: Response) {
-        try {
-            const response = await this.basicFormService.findAll()
-            if (response) {
-                return await this.sendResponse('success',res.send(response))   
-              } 
-              return this.sendResponse('error',res.send(response))
+    // @Get()
+    // async findAll(@Res() res: Response) {
+    //     try {
+    //         const response = await this.basicFormService.find()
+    //         if (response) {
+    //             return await this.sendResponse('success',res.send(response))   
+    //           } 
+    //           return this.sendResponse('error',res.send(response))
   
-        } catch (error) {
-            throw new BadRequestException({
-                msg:networkError,
-                error
-            })
-        }
-    }
+    //     } catch (error) {
+    //         throw new BadRequestException({
+    //             msg:networkError,
+    //             error
+    //         })
+    //     }
+    // }
     @Get(':id')
     async findOne(@Param() id: number, @Res() res: Response) {
         try {
@@ -54,6 +55,11 @@ export class DocumentUploadController {
             })
         }
     }
+    @Get()
+    findAllByFilter(@Paginate() query: PaginateQuery): Promise<Paginated<DocumentUploadEntity>> {
+        return this.basicFormService.findAll(query)
+      }
+    
     @Post()
     @UsePipes(new ValidationPipe())
     async create(@Body() createFormDto: DocumentUploadDto, @Res() res: Response) {

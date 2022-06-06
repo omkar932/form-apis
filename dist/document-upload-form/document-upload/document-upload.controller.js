@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const document_upload_service_1 = require("./document-upload/document-upload.service");
 const document_upload_dto_1 = require("./document-upload.dto");
 const error_response_1 = require("../../common/constant/error-response");
+const nestjs_paginate_1 = require("nestjs-paginate");
 let DocumentUploadController = class DocumentUploadController {
     constructor(basicFormService) {
         this.basicFormService = basicFormService;
@@ -35,21 +36,6 @@ let DocumentUploadController = class DocumentUploadController {
             };
         }
     }
-    async findAll(res) {
-        try {
-            const response = await this.basicFormService.findAll();
-            if (response) {
-                return await this.sendResponse('success', res.send(response));
-            }
-            return this.sendResponse('error', res.send(response));
-        }
-        catch (error) {
-            throw new common_1.BadRequestException({
-                msg: error_response_1.networkError,
-                error
-            });
-        }
-    }
     async findOne(id, res) {
         try {
             const response = await this.basicFormService.findOne(id);
@@ -64,6 +50,9 @@ let DocumentUploadController = class DocumentUploadController {
                 error
             });
         }
+    }
+    findAllByFilter(query) {
+        return this.basicFormService.findAll(query);
     }
     async create(createFormDto, res) {
         try {
@@ -112,13 +101,6 @@ let DocumentUploadController = class DocumentUploadController {
     }
 };
 __decorate([
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], DocumentUploadController.prototype, "findAll", null);
-__decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)()),
     __param(1, (0, common_1.Res)()),
@@ -126,6 +108,13 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], DocumentUploadController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, nestjs_paginate_1.Paginate)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], DocumentUploadController.prototype, "findAllByFilter", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
